@@ -2,6 +2,10 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import numpy as np
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="天赋探索算法服务")
 
@@ -19,11 +23,11 @@ class AnswerRequest(BaseModel):
 
 
 class ReportResult(BaseModel):
-    dimension_scores: dict
-    percentile_ranks: dict
+    dimensionScores: dict
+    percentileRanks: dict
     tags: List[str]
-    red_flags: List[str]
-    validity_score: int
+    redFlags: List[str]
+    validityScore: int
 
 
 # ==================== 核心算法 ====================
@@ -99,7 +103,8 @@ def compute_percentiles(scores: dict, norm_data: dict) -> dict:
     percentiles = {}
     for dim, score in scores.items():
         data = norm_data.get(dim, [50, 60, 70, 80, 90])
-        percentiles[dim] = int(np.percentile(data, min(max(score, 0), 100)))
+        pct = np.mean(np.array(data) < score) * 100
+        percentiles[dim] = int(round(pct))
     return percentiles
 
 
@@ -120,13 +125,18 @@ def root():
 
 @app.post("/compute", response_model=ReportResult)
 async def compute_report(request: AnswerRequest):
+    logger.info(f"收到计算请求: userId={request.userId}, answers={len(request.answers)}")
+
     if not request.answers or len(request.answers) < 25:
+        logger.warning(f"答案数量不足: {len(request.answers) if request.answers else 0}")
         raise HTTPException(status_code=400, detail="需要完整的25题答案")
 
     dim_scores = compute_dimension_scores(request.answers)
     percentiles = compute_percentiles(dim_scores, NORM_DATA)
     tags = match_tags(dim_scores)
     validity = compute_validity(request.answers)
+
+    logger.info(f"计算完成: scores={dim_scores}, validity={validity}")
 
     red_flags = []
     if dim_scores.get('stability', 50) < 30:
@@ -137,9 +147,9 @@ async def compute_report(request: AnswerRequest):
         red_flags.append("测试结果参考价值有限，建议静心后重测")
 
     return ReportResult(
-        dimension_scores=dim_scores,
-        percentile_ranks=percentiles,
+        dimensionScores=dim_scores,
+        percentileRanks=percentiles,
         tags=tags,
-        red_flags=red_flags,
-        validity_score=validity
+        redFlags=red_flags,
+        validityScore=validity
     )
