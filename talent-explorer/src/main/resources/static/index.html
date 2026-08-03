@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天赋探索 - 职业性格测评</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #e8f0fe 0%, #f5f7fa 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ===== 容器 ===== */
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ===== 头部 ===== */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px 20px 0 0;
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .header .progress-bar {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .header .progress-bar .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .header .progress-text {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 6px;
+        }
+
+        /* ===== 主内容 ===== */
+        .main-content {
+            background: white;
+            padding: 30px 40px 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== 题目区域 ===== */
+        .question-item {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 14px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .question-item:hover {
+            background: #f0f2f7;
+            transform: translateX(4px);
+        }
+
+        .question-item .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .question-item .q-number {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 15px;
+        }
+
+        .question-item .q-dimension {
+            font-size: 12px;
+            color: #999;
+            background: #e8ecf4;
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+
+        .question-item .q-text {
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .question-item .options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .question-item .options label {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            padding: 8px 6px;
+            background: white;
+            border: 2px solid #e0e4ec;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 13px;
+            color: #555;
+            user-select: none;
+        }
+
+        .question-item .options label:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .question-item .options input[type="radio"] {
+            display: none;
+        }
+
+        .question-item .options input[type="radio"]:checked + span {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .question-item .options label:has(input:checked) {
+            border-color: #667eea;
+            background: #eef1ff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+            transform: scale(1.02);
+        }
+
+        /* ===== 提交按钮 ===== */
+        .submit-area {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-submit {
+            padding: 14px 60px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== 结果区域 ===== */
+        #resultArea {
+            display: none;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #e0e4ec;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #resultArea .result-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        #resultArea .result-title span {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== 维度得分卡片 ===== */
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dimension-card {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #e8ecf4;
+        }
+
+        .dimension-card .dim-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+
+        .dimension-card .dim-bar-bg {
+            background: #e8ecf4;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dimension-card .dim-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        .dimension-card .dim-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* ===== 标签 ===== */
+        .tags-section {
+            margin-bottom: 20px;
+        }
+
+        .tags-section .section-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tag-item {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 4px 6px 4px 0;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        }
+
+        /* ===== 红牌警告 ===== */
+        .red-flags {
+            background: #fff5f5;
+            border-left: 4px solid #e74c3c;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .red-flags .flag-title {
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 6px;
+        }
+
+        .red-flags li {
+            color: #c0392b;
+            margin-left: 20px;
+            padding: 2px 0;
+        }
+
+        /* ===== 效度 ===== */
+        .validity-score {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 10px;
+            background: #f8f9fc;
+            border-radius: 8px;
+        }
+
+        .validity-score strong {
+            color: #2c3e50;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .header h1 { font-size: 26px; }
+            .main-content { padding: 20px; }
+            .question-item { padding: 14px 16px; }
+            .question-item .options label {
+                min-width: 44px;
+                font-size: 12px;
+                padding: 6px 4px;
+            }
+            .dimension-grid { grid-template-columns: 1fr; }
+            .btn-submit { padding: 12px 40px; font-size: 16px; }
+        }
+
+        /* ===== 加载动画 ===== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== 题目数量提示 ===== */
+        .question-count {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-count strong {
+            color: #667eea;
+        }
+
+        /* ===== 端口提示 ===== */
+        .port-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 400;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- ===== 头部 ===== -->
+    <header class="header">
+        <h1>
+            🧠 天赋探索
+            <span class="port-badge">端口 8081</span>
+        </h1>
+        <p class="subtitle">5 大维度 · 25 题 · 发现你的职业性格优势</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">已答 0 / 25 题</div>
+    </header>
+
+    <!-- ===== 主内容 ===== -->
+    <div class="main-content">
+
+        <!-- 题目数量提示 -->
+        <div class="question-count">
+            💡 请根据实际情况，选择最符合您的选项（<strong>1</strong> = 非常不符合 · <strong>5</strong> = 非常符合）
+        </div>
+
+        <!-- 题目列表 -->
+        <form id="surveyForm">
+            <div id="questionsContainer"></div>
+
+            <!-- 提交按钮 -->
+            <div class="submit-area">
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    提交测评 · 生成报告
+                </button>
+            </div>
+        </form>
+
+        <!-- ===== 结果区域 ===== -->
+        <div id="resultArea">
+            <div class="result-title">📊 您的<span>天赋探索报告</span></div>
+            <div id="reportContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    //  1. 配置 - 后端 API 地址（适配 8081 端口）
+    // ============================================================
+    const CONFIG = {
+        // 方式1：使用相对路径（推荐，会自动匹配当前端口）
+        API_URL: '/api/report/submit',
+
+        // 方式2：如果前端和后端不在同一端口，使用完整 URL
+        // API_URL: 'http://localhost:8081/api/report/submit',
+
+        // 方式3：动态获取（开发环境用 localhost:8081，生产环境用当前域名）
+        // getApiUrl: function() {
+        //     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        //         return 'http://localhost:8081/api/report/submit';
+        //     }
+        //     return '/api/report/submit';
+        // }
+    };
+
+    // ============================================================
+    //  2. 题目数据（25题，与后端算法对应）
+    // ============================================================
+    const QUESTIONS = [
+        // 开放性 (1-5)
+        { id: 1, text: '我喜欢尝试新鲜事物和体验', dimension: '开放性' },
+        { id: 2, text: '我经常有丰富的想象力和创意', dimension: '开放性' },
+        { id: 3, text: '我对艺术和美学有浓厚的兴趣', dimension: '开放性' },
+        { id: 4, text: '我喜欢思考抽象和复杂的概念', dimension: '开放性' },
+        { id: 5, text: '我乐于接受不同的文化和观点', dimension: '开放性' },
+        // 尽责性 (6-10)
+        { id: 6, text: '我做事有条理，注重计划', dimension: '尽责性' },
+        { id: 7, text: '我对自己要求很高，追求完美', dimension: '尽责性' },
+        { id: 8, text: '我能够坚持完成长期目标', dimension: '尽责性' },
+        { id: 9, text: '我做事细心，很少犯错', dimension: '尽责性' },
+        { id: 10, text: '我喜欢提前做好准备和规划', dimension: '尽责性' },
+        // 外向性 (11-15)
+        { id: 11, text: '我在社交场合中感到自在', dimension: '外向性' },
+        { id: 12, text: '我喜欢成为人群中的焦点', dimension: '外向性' },
+        { id: 13, text: '我精力充沛，喜欢与人互动', dimension: '外向性' },
+        { id: 14, text: '我善于主动结交新朋友', dimension: '外向性' },
+        { id: 15, text: '我在团队中乐于表达观点', dimension: '外向性' },
+        // 情绪稳定性 (16-20)
+        { id: 16, text: '我很少感到焦虑或紧张', dimension: '情绪稳定性' },
+        { id: 17, text: '我能够很好地应对压力', dimension: '情绪稳定性' },
+        { id: 18, text: '我情绪稳定，不容易波动', dimension: '情绪稳定性' },
+        { id: 19, text: '我对自己有足够的自信', dimension: '情绪稳定性' },
+        { id: 20, text: '遇到挫折时我能很快恢复', dimension: '情绪稳定性' },
+        // 测谎题 (21-25)
+        { id: 21, text: '我从来没有对任何人说过谎', dimension: '测谎题' },
+        { id: 22, text: '我始终遵守每一条规则', dimension: '测谎题' },
+        { id: 23, text: '我从未有过任何负面情绪', dimension: '测谎题' },
+        { id: 24, text: '我在任何情况下都能保持冷静', dimension: '情景题' },
+        { id: 25, text: '我能够轻松解决所有问题', dimension: '情景题' }
+    ];
+
+    // 维度颜色
+    const DIM_COLORS = {
+        '开放性': '#667eea',
+        '尽责性': '#f093fb',
+        '外向性': '#4facfe',
+        '情绪稳定性': '#43e97b',
+        '测谎题': '#fa709a',
+        '情景题': '#fee140'
+    };
+
+    // 维度中文->英文映射（用于后端响应）
+    const DIM_NAMES = {
+        'openness': '开放性',
+        'conscientiousness': '尽责性',
+        'extraversion': '外向性',
+        'stability': '情绪稳定性'
+    };
+
+    // ============================================================
+    //  3. 渲染题目
+    // ============================================================
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+
+        QUESTIONS.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.dataset.qid = q.id;
+
+            const color = DIM_COLORS[q.dimension] || '#667eea';
+
+            div.innerHTML = `
+                <div class="q-header">
+                    <span class="q-number">第 ${q.id} 题</span>
+                    <span class="q-dimension" style="color:${color};border:1px solid ${color}20;background:${color}10;">
+                        ${q.dimension}
+                    </span>
+                </div>
+                <div class="q-text">${q.text}</div>
+                <div class="options">
+                    ${[1,2,3,4,5].map(v => `
+                        <label data-value="${v}">
+                            <input type="radio" name="q${q.id}" value="${v}">
+                            <span>${v}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+
+            container.appendChild(div);
+
+            // 监听变化更新进度
+            const radios = div.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.addEventListener('change', updateProgress);
+            });
+        });
+    }
+
+    // ============================================================
+    //  4. 进度更新
+    // ============================================================
+    function updateProgress() {
+        const total = QUESTIONS.length;
+        let answered = 0;
+        for (let i = 1; i <= total; i++) {
+            const checked = document.querySelector(`input[name="q${i}"]:checked`);
+            if (checked) answered++;
+        }
+
+        const pct = Math.round((answered / total) * 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressText').textContent = `已答 ${answered} / ${total} 题`;
+    }
+
+    // ============================================================
+    //  5. 提交表单（已适配 8081 端口）
+    // ============================================================
+    document.getElementById('surveyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        const total = QUESTIONS.length;
+
+        // 收集答案
+        const answers = [];
+        let allAnswered = true;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                allAnswered = false;
+                // 高亮未答的题目
+                const qItem = document.querySelector(`.question-item[data-qid="${i}"]`);
+                if (qItem) {
+                    qItem.style.borderLeftColor = '#e74c3c';
+                    qItem.style.background = '#fff5f5';
+                    setTimeout(() => {
+                        qItem.style.borderLeftColor = '#667eea';
+                        qItem.style.background = '#f8f9fc';
+                    }, 1500);
+                }
+                continue;
+            }
+            answers.push({
+                questionId: i,
+                score: parseInt(selected.value)
+            });
+        }
+
+        if (!allAnswered) {
+            alert('⚠️ 请回答所有 25 道题后再提交！');
+            return;
+        }
+
+        // 禁用按钮，显示加载状态
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="loading"></span> 生成报告中...`;
+
+        try {
+            // ⭐ 使用配置的 API 地址（相对路径，自动适配 8081 端口）
+            const response = await fetch(CONFIG.API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ answers })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`服务器错误 (${response.status}): ${errText}`);
+            }
+
+            const data = await response.json();
+            displayReport(data);
+
+            // 滚动到结果
+            document.getElementById('resultArea').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+        } catch (error) {
+            console.error('提交错误:', error);
+            alert('❌ 提交失败：' + error.message + '\n\n请确认：\n1. Java 服务运行在 8081 端口\n2. Python 服务运行在 8000 端口\n3. 网络连接正常');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '提交测评 · 生成报告';
+        }
+    });
+
+    // ============================================================
+    //  6. 显示报告
+    // ============================================================
+    function displayReport(data) {
+        const resultArea = document.getElementById('resultArea');
+        const content = document.getElementById('reportContent');
+
+        const dimScores = data.dimensionScores || {};
+        const percentileRanks = data.percentileRanks || {};
+        const tags = data.tags || [];
+        const redFlags = data.redFlags || [];
+        const validity = data.validityScore || 0;
+
+        // ---- 维度得分 ----
+        let dimHtml = '<div class="dimension-grid">';
+        for (const [key, name] of Object.entries(DIM_NAMES)) {
+            const score = dimScores[key] || 0;
+            const color = DIM_COLORS[name] || '#667eea';
+            const pct = Math.min(Math.max(score, 0), 100);
+            dimHtml += `
+                <div class="dimension-card">
+                    <div class="dim-name">${name}</div>
+                    <div class="dim-bar-bg">
+                        <div class="dim-bar-fill" style="width:${pct}%;background:${color};"></div>
+                    </div>
+                    <div class="dim-score">${score} 分</div>
+                    <div style="font-size:12px;color:#999;text-align:right;">
+                        百分位: ${percentileRanks[key] || '--'}
+                    </div>
+                </div>
+            `;
+        }
+        dimHtml += '</div>';
+
+        // ---- 标签 ----
+        let tagsHtml = '';
+        if (tags.length > 0) {
+            tagsHtml = `
+                <div class="tags-section">
+                    <span class="section-label">🏷️ 您的性格标签</span>
+                    ${tags.map(t => `<span class="tag-item">${t}</span>`).join('')}
+                </div>
+            `;
+        }
+
+        // ---- 红牌警告 ----
+        let redFlagsHtml = '';
+        if (redFlags.length > 0) {
+            redFlagsHtml = `
+                <div class="red-flags">
+                    <div class="flag-title">⚠️ 建议与提醒</div>
+                    <ul>
+                        ${redFlags.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // ---- 效度 ----
+        const validityHtml = `
+            <div class="validity-score">
+                <strong>效度分数:</strong> ${validity} 分
+                ${validity >= 60 ? '✅ 结果可信度较高' : '⚠️ 建议静心后重新测试'}
+            </div>
+        `;
+
+        content.innerHTML = dimHtml + tagsHtml + redFlagsHtml + validityHtml;
+        resultArea.style.display = 'block';
+
+        // 动画：延迟触发进度条动画
+        setTimeout(() => {
+            document.querySelectorAll('.dim-bar-fill').forEach(el => {
+                const w = el.style.width;
+                el.style.width = '0%';
+                setTimeout(() => { el.style.width = w; }, 50);
+            });
+        }, 100);
+    }
+
+    // ============================================================
+    //  7. 页面加载时初始化
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderQuestions();
+        updateProgress();
+        console.log('🧠 天赋探索系统已加载');
+        console.log('📍 API 地址:', CONFIG.API_URL);
+        console.log('🌐 当前端口:', window.location.port);
+    });
+</script>
+
+</body>
+</html>
