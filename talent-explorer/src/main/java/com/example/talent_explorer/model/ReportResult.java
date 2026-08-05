@@ -9,6 +9,10 @@ public class ReportResult {
     private List<String> tags;
     private List<String> redFlags;
     private Integer validityScore;
+    private String taskId;
+    private EducationResult education;
+    private StrengthResult strengths;
+    private PlanningResult planning;
 
     // Getters and Setters
     public Map<String, Integer> getDimensionScores() { return dimensionScores; }
@@ -21,4 +25,12 @@ public class ReportResult {
     public void setRedFlags(List<String> redFlags) { this.redFlags = redFlags; }
     public Integer getValidityScore() { return validityScore; }
     public void setValidityScore(Integer validityScore) { this.validityScore = validityScore; }
+    public String getTaskId() { return taskId; }
+    public void setTaskId(String taskId) { this.taskId = taskId; }
+    public EducationResult getEducation() { return education; }
+    public void setEducation(EducationResult education) { this.education = education; }
+    public StrengthResult getStrengths() { return strengths; }
+    public void setStrengths(StrengthResult strengths) { this.strengths = strengths; }
+    public PlanningResult getPlanning() { return planning; }
+    public void setPlanning(PlanningResult planning) { this.planning = planning; }
 }

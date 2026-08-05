@@ -17,7 +17,7 @@ public class ReportController {
 
     @PostMapping("/submit")
     public Mono<ReportResult> submit(@RequestBody AnswerRequest request) {
-        String userId = "temp_user";
+        String userId = java.util.UUID.randomUUID().toString();
         return reportService.generateReport(userId, request);
     }
 }

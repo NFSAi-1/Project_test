@@ -1,0 +1,12 @@
+INFO:     Started server process [29680]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64222 - "GET / HTTP/1.1" 200 OK
+INFO:main:收到计算请求: userId=test, answers=25
+INFO:main:计算完成: scores={'openness': 88, 'conscientiousness': 68, 'extraversion': 52, 'stability': 84}, validity=33, degree=硕士
+INFO:     127.0.0.1:50787 - "POST /compute HTTP/1.1" 200 OK
+INFO:main:收到计算请求: userId=69487ce9-b0b7-43cf-946b-4b4528d9e580, answers=25
+INFO:main:计算完成: scores={'openness': 88, 'conscientiousness': 68, 'extraversion': 52, 'stability': 84}, validity=33, degree=硕士
+INFO:     127.0.0.1:61279 - "POST /compute HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55809 - "GET / HTTP/1.1" 200 OK

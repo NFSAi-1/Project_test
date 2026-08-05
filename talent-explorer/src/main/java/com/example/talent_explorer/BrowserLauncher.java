@@ -34,21 +34,29 @@ public class BrowserLauncher implements ApplicationListener<ApplicationReadyEven
 					return;
 				}
 			} catch (Exception e) {
-				log.warn("Desktop.browse failed, trying Runtime.exec fallback: {}", e.getMessage());
+				log.warn("Desktop.browse failed: {}", e.getMessage());
 			}
 
 			try {
 				String os = System.getProperty("os.name").toLowerCase();
 				if (os.contains("win")) {
-					Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", url});
+					try {
+						Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
+						log.info("Browser opened via rundll32: {}", url);
+					} catch (Exception e2) {
+						log.warn("rundll32 failed, trying cmd start: {}", e2.getMessage());
+						Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", url});
+						log.info("Browser opened via cmd start: {}", url);
+					}
 				} else if (os.contains("mac")) {
 					Runtime.getRuntime().exec(new String[]{"open", url});
+					log.info("Browser opened via open: {}", url);
 				} else {
 					Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+					log.info("Browser opened via xdg-open: {}", url);
 				}
-				log.info("Browser opened via Runtime.exec: {}", url);
 			} catch (Exception e) {
-				log.error("Failed to open browser: {}", e.getMessage());
+				log.error("Failed to open browser automatically. Please open {} manually. Error: {}", url, e.getMessage());
 			}
 		}, "browser-launcher").start();
 	}

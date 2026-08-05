@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>天赋探索 - 职业性格测评</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
     <style>
         /* ===== 全局重置 ===== */
         * {
@@ -336,6 +337,333 @@
             color: #2c3e50;
         }
 
+        /* ===== Tab 导航 ===== */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e0e4ec;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            font-weight: 700;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ===== 雷达图容器 ===== */
+        .radar-chart-container {
+            width: 100%;
+            height: 420px;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 学历预测卡片 ===== */
+        .prediction-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 28px 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+        }
+
+        .prediction-card .degree-label {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+
+        .prediction-card .degree-value {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: 4px;
+        }
+
+        .prediction-card .degree-confidence {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .confidence-bar-bg {
+            background: rgba(255,255,255,0.25);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 12px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .confidence-bar-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 1.2s ease;
+            width: 0%;
+        }
+
+        /* ===== 学科方向推荐 ===== */
+        .direction-list {
+            margin-bottom: 20px;
+        }
+
+        .direction-item {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .direction-item .dir-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .direction-item .dir-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .direction-item .dir-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .direction-item .dir-subjects {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .direction-item .dir-subjects span {
+            display: inline-block;
+            background: #eef1ff;
+            color: #667eea;
+            padding: 3px 12px;
+            border-radius: 12px;
+            margin: 2px 4px 2px 0;
+            font-size: 12px;
+        }
+
+        /* ===== 分析文本区块 ===== */
+        .analysis-text {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .analysis-text .section-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        /* ===== 优劣势卡片 ===== */
+        .strength-card {
+            background: #f0faf5;
+            border-left: 4px solid #27ae60;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+        }
+
+        .strength-card .item-name {
+            font-weight: 600;
+            color: #27ae60;
+            margin-bottom: 4px;
+        }
+
+        .strength-card .item-desc {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .weakness-card {
+            background: #fff8f0;
+            border-left: 4px solid #e67e22;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+        }
+
+        .weakness-card .item-name {
+            font-weight: 600;
+            color: #e67e22;
+            margin-bottom: 4px;
+        }
+
+        .weakness-card .item-desc {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* ===== 职业路径卡片 ===== */
+        .career-path-card {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 14px;
+            border: 1px solid #e8ecf4;
+        }
+
+        .career-path-card .cp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .career-path-card .cp-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .career-path-card .cp-match {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .career-path-card .cp-reason {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        /* ===== 时间线 ===== */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+        }
+
+        .timeline-item .tl-phase {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .timeline-item .tl-time {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .timeline-item .tl-actions {
+            list-style: none;
+            padding: 0;
+        }
+
+        .timeline-item .tl-actions li {
+            font-size: 13px;
+            color: #555;
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .timeline-item .tl-actions li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        /* ===== 占位提示 ===== */
+        .placeholder-hint {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .placeholder-hint .ph-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .placeholder-hint .ph-text {
+            font-size: 15px;
+        }
+
         /* ===== 响应式 ===== */
         @media (max-width: 640px) {
             .header h1 { font-size: 26px; }
@@ -414,7 +742,7 @@
 
         <!-- 题目数量提示 -->
         <div class="question-count">
-            💡 请根据实际情况，选择最符合您的选项（<strong>1</strong> = 非常不符合 · <strong>5</strong> = 非常符合）
+            💡 请根据实际情况，选择最符合您的选项
         </div>
 
         <!-- 题目列表 -->
@@ -534,10 +862,16 @@
                 </div>
                 <div class="q-text">${q.text}</div>
                 <div class="options">
-                    ${[1,2,3,4,5].map(v => `
-                        <label data-value="${v}">
-                            <input type="radio" name="q${q.id}" value="${v}">
-                            <span>${v}</span>
+                    ${[
+                        {v:1, label:'非常不符合'},
+                        {v:2, label:'比较不符合'},
+                        {v:3, label:'一般'},
+                        {v:4, label:'比较符合'},
+                        {v:5, label:'非常符合'}
+                    ].map(opt => `
+                        <label data-value="${opt.v}">
+                            <input type="radio" name="q${q.id}" value="${opt.v}">
+                            <span>${opt.label}</span>
                         </label>
                     `).join('')}
                 </div>
@@ -648,19 +982,68 @@
     });
 
     // ============================================================
-    //  6. 显示报告
+    //  6. 显示报告（Tab 导航版本）
     // ============================================================
     function displayReport(data) {
         const resultArea = document.getElementById('resultArea');
         const content = document.getElementById('reportContent');
 
+        const taskId = data.taskId || '';
+        const education = data.education || null;
+        const strengths = data.strengths || null;
+        const planning = data.planning || null;
+
+        content.innerHTML = `
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('personality')">性格报告</button>
+                <button class="tab-btn" onclick="switchTab('education')">学历预测</button>
+                <button class="tab-btn" onclick="switchTab('strengths')">优势评估</button>
+                <button class="tab-btn" onclick="switchTab('planning')">发展规划</button>
+            </div>
+            <div id="tab-personality" class="tab-panel active"></div>
+            <div id="tab-education" class="tab-panel"></div>
+            <div id="tab-strengths" class="tab-panel"></div>
+            <div id="tab-planning" class="tab-panel"></div>
+        `;
+
+        resultArea.style.display = 'block';
+
+        renderPersonalityTab(data);
+        renderEducationTab(education);
+        renderStrengthsTab(strengths);
+        renderPlanningTab(planning);
+
+        setTimeout(() => {
+            document.querySelectorAll('.dim-bar-fill').forEach(el => {
+                const w = el.style.width;
+                el.style.width = '0%';
+                setTimeout(() => { el.style.width = w; }, 50);
+            });
+        }, 100);
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+        const btn = document.querySelector(`.tab-btn[onclick*="${tabName}"]`);
+        const panel = document.getElementById('tab-' + tabName);
+        if (btn) btn.classList.add('active');
+        if (panel) panel.classList.add('active');
+
+        if (tabName === 'strengths') {
+            setTimeout(renderRadarChart, 200);
+        }
+    }
+
+    function renderPersonalityTab(data) {
+        const panel = document.getElementById('tab-personality');
         const dimScores = data.dimensionScores || {};
         const percentileRanks = data.percentileRanks || {};
         const tags = data.tags || [];
         const redFlags = data.redFlags || [];
         const validity = data.validityScore || 0;
 
-        // ---- 维度得分 ----
         let dimHtml = '<div class="dimension-grid">';
         for (const [key, name] of Object.entries(DIM_NAMES)) {
             const score = dimScores[key] || 0;
@@ -681,7 +1064,6 @@
         }
         dimHtml += '</div>';
 
-        // ---- 标签 ----
         let tagsHtml = '';
         if (tags.length > 0) {
             tagsHtml = `
@@ -692,20 +1074,16 @@
             `;
         }
 
-        // ---- 红牌警告 ----
         let redFlagsHtml = '';
         if (redFlags.length > 0) {
             redFlagsHtml = `
                 <div class="red-flags">
                     <div class="flag-title">⚠️ 建议与提醒</div>
-                    <ul>
-                        ${redFlags.map(f => `<li>${f}</li>`).join('')}
-                    </ul>
+                    <ul>${redFlags.map(f => `<li>${f}</li>`).join('')}</ul>
                 </div>
             `;
         }
 
-        // ---- 效度 ----
         const validityHtml = `
             <div class="validity-score">
                 <strong>效度分数:</strong> ${validity} 分
@@ -713,17 +1091,213 @@
             </div>
         `;
 
-        content.innerHTML = dimHtml + tagsHtml + redFlagsHtml + validityHtml;
-        resultArea.style.display = 'block';
+        panel.innerHTML = dimHtml + tagsHtml + redFlagsHtml + validityHtml;
+    }
 
-        // 动画：延迟触发进度条动画
-        setTimeout(() => {
-            document.querySelectorAll('.dim-bar-fill').forEach(el => {
-                const w = el.style.width;
-                el.style.width = '0%';
-                setTimeout(() => { el.style.width = w; }, 50);
+    function renderEducationTab(edu) {
+        const panel = document.getElementById('tab-education');
+        if (!edu || !edu.predictedDegree) {
+            panel.innerHTML = `<div class="placeholder-hint"><span class="ph-icon">📚</span><p class="ph-text">学历预测数据暂不可用，请稍后重试</p></div>`;
+            return;
+        }
+
+        const directions = edu.subjectDirections || [];
+        let dirHtml = '';
+        if (directions.length > 0) {
+            dirHtml = '<div class="direction-list">';
+            directions.forEach(d => {
+                const subjects = (d.subjects || []).map(s => `<span>${s}</span>`).join('');
+                dirHtml += `
+                    <div class="direction-item">
+                        <div class="dir-header">
+                            <span class="dir-name">${d.direction}</span>
+                            <span class="dir-score">匹配度 ${d.score || 0}%</span>
+                        </div>
+                        <div class="dim-bar-bg" style="margin-bottom:6px;">
+                            <div class="dim-bar-fill" style="width:${d.score || 0}%;background:#667eea;"></div>
+                        </div>
+                        <div class="dir-subjects">${subjects}</div>
+                    </div>
+                `;
             });
-        }, 100);
+            dirHtml += '</div>';
+        }
+
+        const confidence = edu.degreeConfidence || 0;
+        panel.innerHTML = `
+            <div class="prediction-card">
+                <div class="degree-label">预测最高学历</div>
+                <div class="degree-value">${edu.predictedDegree}</div>
+                <div class="degree-confidence">置信度 ${confidence}%</div>
+                <div class="confidence-bar-bg">
+                    <div class="confidence-bar-fill" data-width="${confidence}%"></div>
+                </div>
+            </div>
+            ${dirHtml}
+            <div class="analysis-text">
+                <span class="section-label">📖 学历发展分析</span>
+                ${edu.educationAnalysis || '暂无分析内容'}
+            </div>
+        `;
+
+        setTimeout(() => {
+            panel.querySelectorAll('.confidence-bar-fill').forEach(el => {
+                el.style.width = el.dataset.width;
+            });
+        }, 200);
+    }
+
+    function renderStrengthsTab(str) {
+        const panel = document.getElementById('tab-strengths');
+        if (!str || !str.dimensions || str.dimensions.length === 0) {
+            panel.innerHTML = `<div class="placeholder-hint"><span class="ph-icon">🔍</span><p class="ph-text">优势评估数据暂不可用，请稍后重试</p></div>`;
+            return;
+        }
+
+        panel.innerHTML = `
+            <div class="radar-chart-container" id="radarChart"></div>
+            <div id="strengthList"></div>
+            <div class="analysis-text">
+                <span class="section-label">📝 综合评估总结</span>
+                ${str.overallSummary || '暂无总结内容'}
+            </div>
+        `;
+
+        window._strengthsData = str;
+        setTimeout(renderRadarChart, 300);
+
+        const listDiv = document.getElementById('strengthList');
+        let listHtml = '';
+
+        const strengths = str.strengths || [];
+        if (strengths.length > 0) {
+            listHtml += '<div class="tags-section"><span class="section-label">✅ 个人优势</span>';
+            strengths.forEach(s => {
+                listHtml += `
+                    <div class="strength-card">
+                        <div class="item-name">${s.name}</div>
+                        <div class="item-desc">${s.description || ''}</div>
+                    </div>
+                `;
+            });
+            listHtml += '</div>';
+        }
+
+        const weaknesses = str.weaknesses || [];
+        if (weaknesses.length > 0) {
+            listHtml += '<div class="tags-section"><span class="section-label">🔧 待提升领域</span>';
+            weaknesses.forEach(w => {
+                listHtml += `
+                    <div class="weakness-card">
+                        <div class="item-name">${w.name}</div>
+                        <div class="item-desc">${w.description || ''}</div>
+                    </div>
+                `;
+            });
+            listHtml += '</div>';
+        }
+
+        listDiv.innerHTML = listHtml;
+    }
+
+    function renderRadarChart() {
+        const container = document.getElementById('radarChart');
+        if (!container || container.clientWidth === 0) return;
+
+        const str = window._strengthsData;
+        if (!str || !str.dimensions) return;
+
+        const dims = str.dimensions;
+        const indicators = dims.map(d => ({ name: d.name, max: 100 }));
+        const values = dims.map(d => d.score || 0);
+
+        const chart = echarts.init(container);
+        chart.setOption({
+            tooltip: {},
+            radar: {
+                indicator: indicators,
+                center: ['50%', '50%'],
+                radius: '65%',
+                axisName: { fontSize: 13, color: '#555' }
+            },
+            series: [{
+                type: 'radar',
+                data: [{ value: values, name: '能力评估' }],
+                areaStyle: { color: 'rgba(102, 126, 234, 0.25)' },
+                lineStyle: { color: '#667eea', width: 2 },
+                itemStyle: { color: '#764ba2' },
+                symbol: 'circle',
+                symbolSize: 6
+            }]
+        });
+
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderPlanningTab(plan) {
+        const panel = document.getElementById('tab-planning');
+        if (!plan || !plan.careerPaths || plan.careerPaths.length === 0) {
+            panel.innerHTML = `<div class="placeholder-hint"><span class="ph-icon">🎯</span><p class="ph-text">发展规划数据暂不可用，请稍后重试</p></div>`;
+            return;
+        }
+
+        let careerHtml = '';
+        (plan.careerPaths || []).forEach(cp => {
+            careerHtml += `
+                <div class="career-path-card">
+                    <div class="cp-header">
+                        <span class="cp-title">${cp.career}</span>
+                        <span class="cp-match">匹配度 ${cp.matchScore || 0}%</span>
+                    </div>
+                    <div class="cp-reason">${cp.reason || ''}</div>
+                </div>
+            `;
+        });
+
+        let shortHtml = '';
+        const shortTerm = plan.shortTermPlan || [];
+        if (shortTerm.length > 0) {
+            shortHtml = '<div class="tags-section"><span class="section-label">📋 短期规划（1-2年）</span><div class="timeline">';
+            shortTerm.forEach(item => {
+                const actions = (item.actions || []).map(a => `<li>${a}</li>`).join('');
+                shortHtml += `
+                    <div class="timeline-item">
+                        <div class="tl-phase">${item.phase}</div>
+                        <div class="tl-time">${item.timeline || ''}</div>
+                        <ul class="tl-actions">${actions}</ul>
+                    </div>
+                `;
+            });
+            shortHtml += '</div></div>';
+        }
+
+        let longHtml = '';
+        const longTerm = plan.longTermPlan || [];
+        if (longTerm.length > 0) {
+            longHtml = '<div class="tags-section"><span class="section-label">🎯 长期规划（3-5年）</span><div class="timeline">';
+            longTerm.forEach(item => {
+                const actions = (item.actions || []).map(a => `<li>${a}</li>`).join('');
+                longHtml += `
+                    <div class="timeline-item">
+                        <div class="tl-phase">${item.phase}</div>
+                        <div class="tl-time">${item.timeline || ''}</div>
+                        <ul class="tl-actions">${actions}</ul>
+                    </div>
+                `;
+            });
+            longHtml += '</div></div>';
+        }
+
+        panel.innerHTML = `
+            <div class="tags-section"><span class="section-label">💼 推荐职业方向</span></div>
+            ${careerHtml}
+            ${shortHtml}
+            ${longHtml}
+            <div class="analysis-text">
+                <span class="section-label">📝 规划建议总结</span>
+                ${plan.planningSummary || '暂无总结内容'}
+            </div>
+        `;
     }
 
     // ============================================================

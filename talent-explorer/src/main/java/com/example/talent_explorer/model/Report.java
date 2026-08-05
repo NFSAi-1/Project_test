@@ -16,6 +16,8 @@ public class Report {
     private Integer extraversion;
     private Integer stability;
     @Column(columnDefinition = "json")
+    private String rawAnswersJson;
+    @Column(columnDefinition = "json")
     private String tagsJson;
     private Integer validityScore;
     private LocalDateTime createdAt;
@@ -35,6 +37,8 @@ public class Report {
     public void setExtraversion(Integer extraversion) { this.extraversion = extraversion; }
     public Integer getStability() { return stability; }
     public void setStability(Integer stability) { this.stability = stability; }
+    public String getRawAnswersJson() { return rawAnswersJson; }
+    public void setRawAnswersJson(String rawAnswersJson) { this.rawAnswersJson = rawAnswersJson; }
     public String getTagsJson() { return tagsJson; }
     public void setTagsJson(String tagsJson) { this.tagsJson = tagsJson; }
     public Integer getValidityScore() { return validityScore; }

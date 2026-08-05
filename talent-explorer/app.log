@@ -1,0 +1,68 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.example:talent-explorer >---------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.1.0:run (default-cli) > test-compile @ talent-explorer >>>
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ talent-explorer ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ talent-explorer ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ talent-explorer ---
+[INFO] skip non existing resourceDirectory D:\develop\project\talent-explorer\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ talent-explorer ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.1.0:run (default-cli) < test-compile @ talent-explorer <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.1.0:run (default-cli) @ talent-explorer ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-05T12:37:33.940+08:00  INFO 47944 --- [talent-explorer] [           main] c.e.t.TalentExplorerApplication          : Starting TalentExplorerApplication using Java 21.0.5 with PID 47944 (D:\develop\project\talent-explorer\target\classes started by 刘慧榕 in D:\develop\project\talent-explorer)
+2026-08-05T12:37:33.941+08:00  INFO 47944 --- [talent-explorer] [           main] c.e.t.TalentExplorerApplication          : No active profile set, falling back to 1 default profile: "default"
+2026-08-05T12:37:34.261+08:00  INFO 47944 --- [talent-explorer] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-05T12:37:34.349+08:00  INFO 47944 --- [talent-explorer] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 81 ms. Found 4 JPA repository interfaces.
+2026-08-05T12:37:34.669+08:00  INFO 47944 --- [talent-explorer] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-05T12:37:34.698+08:00  INFO 47944 --- [talent-explorer] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-05T12:37:34.967+08:00  INFO 47944 --- [talent-explorer] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-05T12:37:34.992+08:00  INFO 47944 --- [talent-explorer] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-05T12:37:35.117+08:00  INFO 47944 --- [talent-explorer] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@79ba0285
+2026-08-05T12:37:35.118+08:00  INFO 47944 --- [talent-explorer] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-05T12:37:35.170+08:00  INFO 47944 --- [talent-explorer] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/talent_db?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.45
+	Default catalog/schema: talent_db/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-05T12:37:35.811+08:00  INFO 47944 --- [talent-explorer] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-05T12:37:35.854+08:00  INFO 47944 --- [talent-explorer] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-05T12:37:35.985+08:00  INFO 47944 --- [talent-explorer] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-05T12:37:36.415+08:00  INFO 47944 --- [talent-explorer] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8081 (http)
+2026-08-05T12:37:36.422+08:00  INFO 47944 --- [talent-explorer] [           main] c.e.t.TalentExplorerApplication          : Started TalentExplorerApplication in 2.734 seconds (process running for 3.076)
+2026-08-05T12:37:37.551+08:00  INFO 47944 --- [talent-explorer] [rowser-launcher] c.e.talent_explorer.BrowserLauncher      : Browser opened via rundll32: http://localhost:8081
+2026-08-05T12:40:44.688+08:00 ERROR 47944 --- [talent-explorer] [ctor-http-nio-6] c.e.t.service.PythonClient               : Python 计算服务调用失败 (url=http://localhost:8001/compute): org.springframework.web.reactive.function.client.WebClientResponseException$BadRequest: 400 Bad Request from POST http://localhost:8001/compute
+Hibernate: insert into reports (conscientiousness,created_at,extraversion,openness,raw_answers_json,stability,tags_json,task_id,user_id,validity_score) values (?,?,?,?,?,?,?,?,?,?)
+2026-08-05T12:40:44.773+08:00  INFO 47944 --- [talent-explorer] [oundedElastic-2] c.e.t.service.AnalysisService            : Report saved: id=4, taskId=7611b7c3-f388-435b-af34-afccf39cc410
